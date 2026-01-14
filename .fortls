@@ -1,0 +1,4 @@
+{
+  "source_dirs": ["src", "app"],
+  "include_dirs": ["build/**"]
+}
