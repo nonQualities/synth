@@ -1,5 +1,5 @@
 !> -----------------------------------------------------------------------------
-!> NOTES (FORTRAN SYNTAX):
+!> NOTES (FORTRAN SYNTAX): not much experience with fortran :p I keep forgetting syntaxxx (╥﹏╥)
 !> 1. parameter: Equivalent to 'const' in C/C++. Value is fixed at compile-time.
 !> 2. kind=dp: Ensures the literal number (e.g., 440.0) is stored as 64-bit double.
 !> 3. allocatable: Arrays that need explicit memory management (allocate/deallocate).
