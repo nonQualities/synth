@@ -47,7 +47,7 @@ mod_adsr	Finite State Machine for amplitude modulation.	 `Planned`
 ## Technical Details
 1. Oscillator Design
 
-We utilize a Phase Accumulator approach to ensure frequency stability and smooth transitions. $$ \phi_{n} = (\phi_{n-1} + \frac{f}{F_s}) \pmod 1 $$ This allows for continuous frequency modulation without phase discontinuity artifacts.
+We utilize a Phase Accumulator approach to ensure frequency stability and smooth transitions. $\phi_{n} = (\phi_{n-1} + \frac{f}{F_s}) \pmod 1$ This allows for continuous frequency modulation without phase discontinuity artifacts.
 
 2. The Filter (Planned)
 
@@ -55,7 +55,7 @@ The filter implementation uses the Chamberlin State Variable formulation. This m
 
 3. File I/O
 
-The WAV writer (mod_wav) is a custom implementation compliant with the RIFF WAVE specification. It performs explicit quantization from real(64) [-1.0, 1.0] to int(16) [-32767, 32767], with hard clipping protection to prevent integer overflow wrapping.
+The WAV writer (mod_wav) is a custom implementation compliant with the RIFF WAVE specification. It performs explicit quantization from `real(64) [-1.0, 1.0] to int(16) [-32767, 32767]`, with hard clipping protection to prevent integer overflow wrapping.
 
 ## Roadmap & Future Plans
 Phase 1: The Foundation (Current)
