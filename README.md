@@ -6,7 +6,7 @@
 > **Language:** Fortran 2018  
 > **Build System:** fpm (Fortran Package Manager)
 
-## 📖 Abstract
+## Summary
 
 **F-Synth** is a software-based subtractive synthesizer implemented entirely in Modern Fortran. 
 
@@ -16,7 +16,7 @@ The goal is to produce a modular, dependency-free audio engine that writes mathe
 
 ---
 
-## 🏗 System Architecture
+## System Architecture
 
 F-Synth operates on a **Block Processing** architecture to balance memory usage and I/O performance.
 
@@ -30,12 +30,17 @@ graph LR
     D --> E((WAV Writer))
 ```
 ## Core Modules
-Module	Responsibility	Status
-mod_types	Defines strict precision (real64, int16) constants.	✅ Done
-mod_wav	Handles binary I/O and WAV header construction.	✅ Done
-mod_oscillator	Phase-accumulator based waveform generation (Sine, Saw, Square).	🚧 In Progress
-mod_filter	Chamberlin State Variable Filter (Low/High/Band/Notch).	📅 Planned
-mod_adsr	Finite State Machine for amplitude modulation.	📅 Planned
+##### Module	Responsibility	Status:
+
+mod_types	Defines strict precision (real64, int16) constants.	 `Done`
+
+mod_wav	Handles binary I/O and WAV header construction.	`Done`
+
+mod_oscillator	Phase-accumulator based waveform generation (Sine, Saw, Square).	`In Progress`
+
+mod_filter	Chamberlin State Variable Filter (Low/High/Band/Notch).	`Planned`
+
+mod_adsr	Finite State Machine for amplitude modulation.	 `Planned`
 
 
 
