@@ -1,0 +1,55 @@
+[
+   {
+      "arguments": [
+         "gfortran",
+         "-c",
+         "././src/mod_wav.f90",
+         "-Wall",
+         "-Wextra",
+         "-fPIC",
+         "-fmax-errors=1",
+         "-g",
+         "-fcheck=bounds",
+         "-fcheck=array-temps",
+         "-fbacktrace",
+         "-fcoarray=single",
+         "-fPIC",
+         "-fimplicit-none",
+         "-Werror=implicit-interface",
+         "-ffree-form",
+         "-J",
+         "build/gfortran_B5DC81D514740460",
+         "-Ibuild/gfortran_B5DC81D514740460",
+         "-o",
+         "build/gfortran_B5DC81D514740460/synth/src_mod_wav.f90.o"
+      ],
+      "directory": "/home/non_qualities/Projects/synth",
+      "file": "././src/mod_wav.f90"
+   },
+   {
+      "arguments": [
+         "gfortran",
+         "-c",
+         "app/fsynth_main.f90",
+         "-Wall",
+         "-Wextra",
+         "-fPIC",
+         "-fmax-errors=1",
+         "-g",
+         "-fcheck=bounds",
+         "-fcheck=array-temps",
+         "-fbacktrace",
+         "-fcoarray=single",
+         "-fPIC",
+         "-fimplicit-none",
+         "-Werror=implicit-interface",
+         "-ffree-form",
+         "-J",
+         "build/gfortran_B5DC81D514740460",
+         "-Ibuild/gfortran_B5DC81D514740460",
+         "-o",
+         "build/gfortran_B5DC81D514740460/synth/app_fsynth_main.f90.o"
+      ],
+      "directory": "/home/non_qualities/Projects/synth",
+      "file": "app/fsynth_main.f90"
+   }]
