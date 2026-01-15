@@ -16,7 +16,7 @@ program fsynth_main
     ! 1. CONFIGURATION (CONSTANTS)
 
     integer,       parameter :: SAMPLE_RATE = 44100   ! Standard CD Quality
-    integer,       parameter :: DURATION_S  = 2       ! Seconds
+    integer,       parameter :: DURATION_S  = 5     ! Seconds
     real(kind=dp), parameter :: FREQ_HZ     = 440.0_dp ! Note A4
     real(kind=dp), parameter :: PI          = 3.1415926535897932_dp
 
@@ -55,7 +55,7 @@ program fsynth_main
         ! B. Apply Envelope 
         !Envelope means gradually reduce volume over time.
         ! Exponential Decay: exp(-k * t). Higher 'k' means faster fade out.
-        audio_buffer(i) = audio_buffer(i) * exp(-2.0_dp * t)
+        !audio_buffer(i) = audio_buffer(i) * exp(-2.0_dp * t)
         
     end do
 
