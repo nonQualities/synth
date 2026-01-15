@@ -55,7 +55,7 @@ program fsynth_main
         ! B. Apply Envelope 
         !Envelope means gradually reduce volume over time.
         ! Exponential Decay: exp(-k * t). Higher 'k' means faster fade out.
-        !audio_buffer(i) = audio_buffer(i) * exp(-2.0_dp * t)
+        audio_buffer(i) = audio_buffer(i) * exp(-2.0_dp * t)
         
     end do
 
