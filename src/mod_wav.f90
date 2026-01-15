@@ -15,6 +15,7 @@ module mod_wav
     
     private
     public :: save_wav
+    public :: save_csv
 
     ! -- Constants for WAV Format --
     integer(i16), parameter :: PCM_FORMAT   = 1_i16    ! 1 = Linear PCM
@@ -102,4 +103,29 @@ contains
         
     end subroutine save_wav
 
+    ! Saves a short slice of the audio to CSV for plotting
+    subroutine save_csv(filename, samples, sample_rate, num_points)
+        character(len=*), intent(in) :: filename
+        real(kind=dp),    intent(in) :: samples(:)
+        integer,          intent(in) :: sample_rate
+        integer,          intent(in) :: num_points ! How many points to plot?
+        
+        integer :: unit, i
+        real(kind=dp) :: t
+        
+        open(newunit=unit, file=filename, status='replace', action='write')
+        
+        ! Write Header
+        write(unit, *) "Time,Amplitude"
+        
+        ! Write Data (only up to num_points)
+        do i = 1, min(size(samples), num_points)
+            t = real(i- 1, kind=dp) / real(sample_rate, kind=dp)
+            ! Write time and value separated by comma
+            write(unit, "(F10.6, ',', F10.6)") t, samples(i)
+        end do
+        
+        close(unit)
+        print *, "[DEBUG] Wrote plot data to: ", filename
+    end subroutine save_csv
 end module mod_wav

@@ -1,68 +1,57 @@
-!> -----------------------------------------------------------------------------
-!> NOTES (FORTRAN SYNTAX): not much experience with fortran :p I keep forgetting syntaxxx (╥﹏╥)
-!> 1. parameter: Equivalent to 'const' in C/C++. Value is fixed at compile-time.
-!> 2. kind=dp: Ensures the literal number (e.g., 440.0) is stored as 64-bit double.
-!> 3. allocatable: Arrays that need explicit memory management (allocate/deallocate).
-!> 4. (i - 1): We subtract 1 because audio time starts at 0.0s, but Fortran 
-!>             arrays start at index 1.
-!> -----------------------------------------------------------------------------
-
 program fsynth_main
     use mod_types
     use mod_wav
+    use mod_oscillator 
     implicit none
 
+    ! CONFIGURATION
+    integer,       parameter :: SAMPLE_RATE = 44100
+    integer,       parameter :: DURATION_S  = 5
+    real(kind=dp), parameter :: FREQ_HZ     = 440.0_dp
+    integer :: wave_choice  
 
-    ! 1. CONFIGURATION (CONSTANTS)
-
-    integer,       parameter :: SAMPLE_RATE = 44100   ! Standard CD Quality
-    integer,       parameter :: DURATION_S  = 5     ! Seconds
-    real(kind=dp), parameter :: FREQ_HZ     = 440.0_dp ! Note A4
-    real(kind=dp), parameter :: PI          = 3.1415926535897932_dp
-
-
-    ! 2. VARIABLES
-    real(kind=dp), allocatable :: audio_buffer(:) ! The "Sound" Array
-    integer                    :: n_samples       ! Total array size
-    integer                    :: i               ! Loop counter
-    real(kind=dp)              :: t               ! Current time (seconds)
-
-
-    ! 3. INITIALIZATION
-
-    n_samples = SAMPLE_RATE * DURATION_S
+    ! VARIABLES
+    type(oscillator_t)         :: osc
+    real(kind=dp), allocatable :: audio_buffer(:)
+    integer                    :: n_samples, i
+    real(kind=dp)              :: t
     
-    ! Reserve memory for the audio data
+
+    print *, "Choose your waveform:"
+    print *, "  0: Sine (Pure)"
+    print *, "  1: Sawtooth (Buzzy)"
+    print *, "  2: Square (Gameboy)"
+    print *, "  3: Triangle (Flute-like)"
+    print *, "---------------------------------------"
+    
+    ! The 'advance="no"' part keeps the cursor on the same line (like print vs println)
+    write(*, '(A)', advance="no") "Enter choice (0-3): "
+    read(*, *) wave_choice
+
+    if (wave_choice < 0 .or. wave_choice > 3) then
+        print *, "[ERROR] Invalid choice. Defaulting to Sine (0)."
+        wave_choice = 0
+    end if
+
+    ! INITIALIZATION
+    n_samples = SAMPLE_RATE * DURATION_S
     allocate(audio_buffer(n_samples))
 
-    print *, "[INFO] Synthesizing:", DURATION_S, "s of", FREQ_HZ, "Hz Sine Wave"
-    print *, "[INFO] Total Samples:", n_samples
+    print *, "[INFO] Initializing Oscillator..."
+    
+    osc = oscillator_t(FREQ_HZ, real(SAMPLE_RATE, kind=dp), 1.0_dp, wave_choice)
 
-
-    ! 4. SIGNAL GENERATION 
-
-    ! We iterate through every single sample point.
-    ! Formula: y(t) = sin(2 * pi * f * t) * envelope(t)
+    ! SIGNAL GENERATION LOOP
+    print *, "[INFO] Rendering..."
     do i = 1, n_samples
-        
-        ! Convert Sample Index -> Time in Seconds
-        ! We use `real(..., kind=dp)` to force floating-point division.
+        audio_buffer(i) = osc%get_samples()
+  
         t = real(i - 1, kind=dp) / real(SAMPLE_RATE, kind=dp)
-        
-        ! A. Generate the Oscillator (The Tone)
-        audio_buffer(i) = sin(2.0_dp * PI * FREQ_HZ * t)
-        
-        ! B. Apply Envelope 
-        !Envelope means gradually reduce volume over time.
-        ! Exponential Decay: exp(-k * t). Higher 'k' means faster fade out.
-        audio_buffer(i) = audio_buffer(i) * exp(-2.0_dp * t)
-        
+        audio_buffer(i) = audio_buffer(i) * exp(-1.0_dp * t)
     end do
 
-
-    ! 5. OUTPUT
-
     call save_wav("output.wav", audio_buffer, SAMPLE_RATE)
+    call save_csv("wave_debug.csv", audio_buffer, SAMPLE_RATE, 500)
     
     deallocate(audio_buffer)
 
