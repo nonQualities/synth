@@ -24,7 +24,7 @@ program fsynth_main
     print *, "  3: Triangle (Flute-like)"
     print *, "---------------------------------------"
     
-    ! The 'advance="no"' part keeps the cursor on the same line (like print vs println)
+   
     write(*, '(A)', advance="no") "Enter choice (0-3): "
     read(*, *) wave_choice
 

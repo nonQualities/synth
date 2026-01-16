@@ -2,7 +2,7 @@
 !> MODULE: mod_wav
 !> PURPOSE: Handles the low-level writing of unformatted binary Audio/WAV files.
 !>
-!> NOTES (FORTRAN CONCEPTS): im still a beginner :)
+!> NOTES (FORTRAN CONCEPTS): im still a beginner and keep forgetting syntaxxxx... (╥﹏╥)
 !> 1. intent(in): Read-only argument. The subroutine cannot modify it.
 !> 2. _dp / _i16: Suffixes that force a specific precision (Double / Int16).
 !> 3. allocatable: Arrays whose size is determined at runtime, not compile time.
@@ -31,16 +31,13 @@ contains
         real(kind=dp),    intent(in) :: samples(:) 
         integer,          intent(in) :: sample_rate
         
-        ! Local Variables
         integer(kind=i16), allocatable :: pcm_data(:)
         integer :: file_unit, i
         integer :: data_chunk_size, total_file_size
         
    
         ! QUANTIZATION (Float -> Int16)
-        ! We map the continuous range [-1.0, 1.0] to the discrete range 
-        ! [-32767, 32767]. We must "clip" values outside this range to 
-        ! avoid integer wraparound (which causes nasty digital distortion).
+        ! We map the continuous range [-1.0, 1.0] to the discrete range [-32767, 32767]. We "clip" values outside this range to avoid integer wraparound 
 
         allocate(pcm_data(size(samples)))
         
@@ -56,7 +53,7 @@ contains
         end do
 
 
-        ! HEADER CALCULATION
+       
         ! Data Size = NumSamples * NumChannels * BytesPerSample
         data_chunk_size = size(pcm_data) * 2 
         
@@ -76,7 +73,7 @@ contains
         write(file_unit) total_file_size    ! ChunkSize
         write(file_unit) "WAVE"             ! Format
 
-        ! [2] FMT CHUNK (Format specs)
+        ! Format specs
         write(file_unit) "fmt "             ! Subchunk1ID
         write(file_unit) 16                 ! Subchunk1Size (16 for PCM)
         write(file_unit) PCM_FORMAT         ! AudioFormat
@@ -88,14 +85,14 @@ contains
         
         ! BlockAlign = NumChannels * BytesPerSample/8
         write(file_unit) 2_i16              
-        write(file_unit) BITS_PER_SMP       ! BitsPerSample
+        write(file_unit) BITS_PER_SMP      
 
         ! [3] DATA CHUNK (The actual sound)
         write(file_unit) "data"             ! Subchunk2ID
-        write(file_unit) data_chunk_size    ! Subchunk2Size
-        write(file_unit) pcm_data           ! The Array
+        write(file_unit) data_chunk_size    
+        write(file_unit) pcm_data          
         
-        ! Cleanup
+       
         close(file_unit)
         deallocate(pcm_data)
         
@@ -115,10 +112,10 @@ contains
         
         open(newunit=unit, file=filename, status='replace', action='write')
         
-        ! Write Header
+     
         write(unit, *) "Time,Amplitude"
         
-        ! Write Data (only up to num_points)
+       
         do i = 1, min(size(samples), num_points)
             t = real(i- 1, kind=dp) / real(sample_rate, kind=dp)
             ! Write time and value separated by comma

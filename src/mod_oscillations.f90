@@ -7,7 +7,6 @@ module mod_oscillator
 
    
     ! TYPE DEFINITION
-   
     type, public :: oscillator_t
         ! State Variables
         real(kind=dp) :: frequency_hz
@@ -22,7 +21,6 @@ module mod_oscillator
 
    
     ! CONSTRUCTOR INTERFACE
-   
     interface oscillator_t
         module procedure init_oscillator
     end interface
@@ -31,7 +29,6 @@ contains
 
    
     ! CONSTRUCTOR IMPLEMENTATION
-   
     function init_oscillator(freq, rate, amp, wave_type) result(this)
         real(kind=dp), intent(in) :: freq
         real(kind=dp), intent(in) :: rate
@@ -44,13 +41,12 @@ contains
         this%amplitude     = amp
         this%waveform_type = wave_type
         
-        ! Always start phase at 0.0
+        
         this%phase         = 0.0_dp
     end function init_oscillator
 
    
     ! METHOD: GET NEXT SAMPLE
-   
     function get_samples(this) result(sample_out)
         class(oscillator_t), intent(inout) :: this
         real(kind=dp) :: sample_out
@@ -61,7 +57,7 @@ contains
         real(kind=dp), parameter :: PI = 3.1415926535897932_dp
 
         ! 1. Calculate Step Size (Delta)
-        ! This tells us how much of the waveform cycle we complete in one sample
+        ! gives how much of the waveform cycle have been completed in one sample
         step = this%frequency_hz / this%sample_rate
 
         ! Generation of Raw Waveform (-1.0 to 1.0) based on Phase
@@ -93,14 +89,14 @@ contains
             raw_sample = 0.0_dp
         end select
 
-        !  Apply Amplitude
+        !   Amplitude
         sample_out = raw_sample * this%amplitude
 
         !  Update Phase for NEXT time (The Accumulator)
         this%phase = this%phase + step
 
-        ! Wrap Around (Modulo)
-        ! If we go past 1.0, wrap back to the start
+      
+        ! If wnt past 1.0, wrap back to the start
         if (this%phase >= 1.0_dp) then
             this%phase = this%phase - 1.0_dp
         end if
