@@ -36,9 +36,9 @@ mod_types	Defines strict precision (real64, int16) constants.	 `Done`
 
 mod_wav	Handles binary I/O and WAV header construction.	`Done`
 
-mod_oscillator	Phase-accumulator based waveform generation (Sine, Saw, Square).	`In Progress`
+mod_oscillator	Phase-accumulator based waveform generation (Sine, Saw, Square).	`Done`
 
-mod_filter	Chamberlin State Variable Filter (Low/High/Band/Notch).	`Planned`
+mod_filter	Chamberlin State Variable Filter (Low/High/Band/Notch).	`In Progress`
 
 mod_adsr	Finite State Machine for amplitude modulation.	 `Planned`
 
