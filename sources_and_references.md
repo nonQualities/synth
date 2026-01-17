@@ -231,14 +231,11 @@ call env%note_off()
 
 ## Design Notes
 
-**Facts**
+
 
 * The envelope is strictly linear in all segments
 * Time constants are sample-rate invariant
 * State transitions are explicit and deterministic
-
-**Opinion**
-
 * This design is ideal for learning, clarity, and correctness
 * For musical realism, exponential curves or time-constant smoothing may be preferable
 * The explicit FSM makes later extensions trivial (velocity scaling, curve shaping, retrigger modes)
@@ -253,4 +250,4 @@ call env%note_off()
 * Efficient enough for real-time use
 * Extensible without architectural regret
 
-It does exactly what an ADSR should do, no more, no less. Which is rare and suspiciously competent.
+
