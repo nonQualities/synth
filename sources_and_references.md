@@ -11,7 +11,7 @@ It is designed to be **sample-accurate**, **state-based**, and **self-contained*
 
 The envelope advances **one sample at a time** via `get_next_level`, making it appropriate for real-time DSP loops.
 
----
+
 
 ## Features
 
@@ -21,7 +21,7 @@ The envelope advances **one sample at a time** via `get_next_level`, making it a
 * Object-oriented Fortran design using derived types and type-bound procedures
 * Deterministic and stateless outside its own internal memory
 
----
+
 
 ## Module Interface
 
@@ -35,7 +35,7 @@ module mod_adsr
 
   * Provides the `dp` kind (double precision floating point)
 
----
+
 
 ## ADSR States
 
@@ -49,7 +49,7 @@ The envelope is implemented as a finite-state machine using integer constants:
 | `SUSTAIN`  | 3     | Hold sustain level indefinitely       |
 | `RELEASE`  | 4     | Linear fall to 0.0                    |
 
----
+
 
 ## Derived Type: `adsr_t`
 
@@ -69,7 +69,7 @@ type, public :: adsr_t
 
 These parameters define the **shape** of the envelope.
 
----
+
 
 ### Internal State (Private Memory)
 
@@ -80,7 +80,7 @@ These parameters define the **shape** of the envelope.
 
 These fields evolve over time and should not be manipulated directly.
 
----
+
 
 ### Type-Bound Procedures
 
@@ -90,7 +90,7 @@ These fields evolve over time and should not be manipulated directly.
 | `note_on()`        | Trigger attack phase                                |
 | `note_off()`       | Trigger release phase                               |
 
----
+
 
 ## Constructor: `adsr_t(...)`
 
@@ -114,7 +114,7 @@ adsr = adsr_t(a, d, s, r, rate)
 * Sets initial state to `IDLE`
 * Sets `current_level` to `0.0`
 
----
+
 
 ## Methods
 
@@ -131,7 +131,7 @@ call adsr%note_on()
 
 This allows retriggering from non-zero levels, mimicking analog envelope behavior.
 
----
+
 
 ### `note_off`
 
@@ -144,7 +144,7 @@ call adsr%note_off()
 * Forces the envelope into the `RELEASE` state
 * Release always proceeds toward zero
 
----
+
 
 ### `get_next_level`
 
@@ -155,7 +155,7 @@ level = adsr%get_next_level()
 **Purpose**
 Advances the envelope by **exactly one sample** and returns the resulting amplitude.
 
----
+
 
 ## Envelope Logic (Per State)
 
@@ -164,7 +164,7 @@ Advances the envelope by **exactly one sample** and returns the resulting amplit
 * Output forced to `0.0`
 * No progression occurs
 
----
+
 
 ### ATTACK
 
@@ -177,7 +177,7 @@ step = 1.0 / (attack_time * sample_rate)
 
 * Transitions to `DECAY` upon reaching `1.0`
 
----
+
 
 ### DECAY
 
@@ -190,7 +190,7 @@ step = (1.0 - sustain_level) / (decay_time * sample_rate)
 
 * Transitions to `SUSTAIN` once sustain level is reached
 
----
+
 
 ### SUSTAIN
 
@@ -198,7 +198,7 @@ step = (1.0 - sustain_level) / (decay_time * sample_rate)
 * No automatic exit
 * Ends only when `note_off` is called
 
----
+
 
 ### RELEASE
 
@@ -211,7 +211,7 @@ step = 1.0 / (release_time * sample_rate)
 
 * Transitions to `IDLE` at zero
 
----
+
 
 ## Usage Pattern
 
@@ -227,7 +227,7 @@ end do
 call env%note_off()
 ```
 
----
+
 
 ## Design Notes
 
@@ -243,7 +243,7 @@ call env%note_off()
 * For musical realism, exponential curves or time-constant smoothing may be preferable
 * The explicit FSM makes later extensions trivial (velocity scaling, curve shaping, retrigger modes)
 
----
+
 
 ## Summary
 
