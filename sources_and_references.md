@@ -231,8 +231,6 @@ call env%note_off()
 
 ## Design Notes
 
-
-
 * The envelope is strictly linear in all segments
 * Time constants are sample-rate invariant
 * State transitions are explicit and deterministic
@@ -251,3 +249,273 @@ call env%note_off()
 * Extensible without architectural regret
 
 
+# Mathematical Specification of a Linear ADSR Envelope Generator
+
+## 1. Scope and Intent
+
+This document specifies the mathematical model underlying a linear ADSR (Attack–Decay–Sustain–Release) envelope generator implemented in discrete time. The description is independent of any programming language or implementation detail and formalizes the envelope as a deterministic dynamical system.
+
+All quantities are defined explicitly. Assumptions are stated directly. No perceptual or musical claims are made beyond what follows from the mathematics.
+
+---
+
+## 2. Discrete-Time Framework
+
+Let the system operate at a fixed sample rate
+
+$$
+f_s \in \mathbb{R}^+, \quad f_s > 0
+$$
+
+with discrete time index
+
+$$
+n \in \mathbb{Z}_{\ge 0}
+$$
+
+The envelope is defined as a real-valued sequence
+
+$$
+e[n] \in [0, 1]
+$$
+
+updated once per sample.
+
+Time parameters expressed in seconds are converted to sample counts by multiplication with $f_s$.
+
+---
+
+## 3. State Space Definition
+
+The envelope is governed by a finite set of control states:
+
+$$
+\Sigma = \{\text{IDLE}, \text{ATTACK}, \text{DECAY}, \text{SUSTAIN}, \text{RELEASE}\}
+$$
+
+Let
+
+$$
+\sigma[n] \in \Sigma
+$$
+
+denote the active state at sample $n$.
+
+The system state at time $n$ is therefore the ordered pair
+
+$$
+(e[n], \sigma[n])
+$$
+
+The system evolution is fully determined by this state and external control events (`note_on`, `note_off`).
+
+---
+
+## 4. Parameterization
+
+The envelope is parameterized by the following real-valued constants:
+
+- Attack time: $T_A > 0$
+- Decay time: $T_D > 0$
+- Sustain level: $S \in [0, 1]$
+- Release time: $T_R > 0$
+
+Associated sample counts are defined as:
+
+$$
+N_A = T_A f_s,\quad
+N_D = T_D f_s,\quad
+N_R = T_R f_s
+$$
+
+---
+
+## 5. Piecewise Linear Dynamics
+
+### 5.1 IDLE State
+
+In the IDLE state, the envelope output is defined as:
+
+$$
+e[n] = 0
+$$
+
+No accumulation occurs. The state persists until an external transition is applied.
+
+---
+
+### 5.2 ATTACK State
+
+The ATTACK state implements a linear increase toward unity.
+
+The slope is defined as:
+
+$$
+\Delta_A = \frac{1}{T_A f_s}
+$$
+
+The recurrence relation is:
+
+$$
+e[n+1] = e[n] + \Delta_A
+$$
+
+The transition condition is:
+
+$$
+e[n+1] \ge 1 \Rightarrow
+\begin{cases}
+e[n+1] = 1 \\
+\sigma[n+1] = \text{DECAY}
+\end{cases}
+$$
+
+This defines a bounded linear ramp.
+
+---
+
+### 5.3 DECAY State
+
+The DECAY state implements a linear decrease from unity to the sustain level.
+
+The slope is defined as:
+
+$$
+\Delta_D = \frac{1 - S}{T_D f_s}
+$$
+
+The recurrence relation is:
+
+$$
+e[n+1] = e[n] - \Delta_D
+$$
+
+The transition condition is:
+
+$$
+e[n+1] \le S \Rightarrow
+\begin{cases}
+e[n+1] = S \\
+\sigma[n+1] = \text{SUSTAIN}
+\end{cases}
+$$
+
+---
+
+### 5.4 SUSTAIN State
+
+The SUSTAIN state is defined as a fixed point:
+
+$$
+e[n] = S \quad \forall n \text{ such that } \sigma[n] = \text{SUSTAIN}
+$$
+
+No internal time evolution occurs in this state. Exit is possible only via an external transition.
+
+---
+
+### 5.5 RELEASE State
+
+The RELEASE state implements a linear decrease toward zero.
+
+The slope is defined independently of the current envelope level:
+
+$$
+\Delta_R = \frac{1}{T_R f_s}
+$$
+
+The recurrence relation is:
+
+$$
+e[n+1] = e[n] - \Delta_R
+$$
+
+The transition condition is:
+
+$$
+e[n+1] \le 0 \Rightarrow
+\begin{cases}
+e[n+1] = 0 \\
+\sigma[n+1] = \text{IDLE}
+\end{cases}
+$$
+
+This enforces a constant slope rather than a constant-duration release.
+
+---
+
+## 6. Global System Definition
+
+The envelope evolution may be expressed compactly as:
+
+$$
+e[n+1] =
+\begin{cases}
+0 & \sigma[n] = \text{IDLE} \\
+e[n] + \frac{1}{T_A f_s} & \sigma[n] = \text{ATTACK} \\
+e[n] - \frac{1 - S}{T_D f_s} & \sigma[n] = \text{DECAY} \\
+S & \sigma[n] = \text{SUSTAIN} \\
+e[n] - \frac{1}{T_R f_s} & \sigma[n] = \text{RELEASE}
+\end{cases}
+$$
+
+subject to the constraint:
+
+$$
+0 \le e[n] \le 1
+$$
+
+---
+
+## 7. Relation to Continuous-Time Models
+
+Each dynamic segment corresponds to the discrete-time forward Euler integration of a first-order differential equation with constant derivative:
+
+Attack:
+$$
+\frac{de}{dt} = \frac{1}{T_A}
+$$
+
+Decay:
+$$
+\frac{de}{dt} = -\frac{1 - S}{T_D}
+$$
+
+Release:
+$$
+\frac{de}{dt} = -\frac{1}{T_R}
+$$
+
+The discretization is explicit and stable under ideal arithmetic.
+
+---
+
+## 8. Stability and Boundedness
+
+The system satisfies the following properties:
+
+- Envelope output remains bounded in $[0,1]$
+- Slopes are finite and constant within each state
+- The system is numerically stable under finite-precision arithmetic
+- Time scaling is invariant with respect to sample rate
+
+---
+
+## 9. Formal Interpretation
+
+The ADSR envelope constitutes a deterministic hybrid system composed of:
+
+- A finite-state controller
+- A continuous-valued state variable
+- Linear recurrence relations
+- Event-driven transitions
+
+The system is fully observable and deterministic.
+
+---
+
+## 10. Conclusion
+
+The linear ADSR envelope is a piecewise-defined, discrete-time linear dynamical system with explicit state transitions and bounded output. Its behavior is fully determined by its parameters, the sampling rate, and external control events.
+
+No nonlinearities, implicit time constants, or higher-order memory effects are present. The system is mathematically simple, stable, and analytically tractable.
