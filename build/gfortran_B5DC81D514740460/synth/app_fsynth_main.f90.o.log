@@ -1,0 +1,5 @@
+app/fsynth_main.f90:87:31:
+
+   87 |     release_index = (DURATION_S / 2) * SAMPLE_RATE
+      |                               1
+Warning: Integer division truncated to constant ‘2’ at (1) [-Winteger-division]
