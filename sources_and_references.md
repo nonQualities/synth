@@ -472,19 +472,13 @@ $$
 Each dynamic segment corresponds to the discrete-time forward Euler integration of a first-order differential equation with constant derivative:
 
 Attack:
-$$
-\frac{de}{dt} = \frac{1}{T_A}
-$$
+$\frac{de}{dt} = \frac{1}{T_A}$
 
 Decay:
-$$
-\frac{de}{dt} = -\frac{1 - S}{T_D}
-$$
+$\frac{de}{dt} = -\frac{1 - S}{T_D}$
 
 Release:
-$$
-\frac{de}{dt} = -\frac{1}{T_R}
-$$
+$\frac{de}{dt} = -\frac{1}{T_R}$
 
 The discretization is explicit and stable under ideal arithmetic.
 
