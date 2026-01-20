@@ -5,8 +5,6 @@ module mod_oscillator
     private
     public :: oscillator_t
 
-   
-    ! TYPE DEFINITION
     type, public :: oscillator_t
         ! State Variables
         real(kind=dp) :: frequency_hz
@@ -15,20 +13,14 @@ module mod_oscillator
         real(kind=dp) :: phase          ! Range [0.0, 1.0)
         integer       :: waveform_type  ! 0=Sine, 1=Saw, 2=Square, 3=Tri
     contains 
-        ! Methods
         procedure :: get_samples
     end type oscillator_t
-
-   
-    ! CONSTRUCTOR INTERFACE
+    !constructorrr
     interface oscillator_t
         module procedure init_oscillator
     end interface
-
 contains
 
-   
-    ! CONSTRUCTOR IMPLEMENTATION
     function init_oscillator(freq, rate, amp, wave_type) result(this)
         real(kind=dp), intent(in) :: freq
         real(kind=dp), intent(in) :: rate
@@ -40,39 +32,28 @@ contains
         this%sample_rate   = rate
         this%amplitude     = amp
         this%waveform_type = wave_type
-        
-        
         this%phase         = 0.0_dp
     end function init_oscillator
 
    
-    ! METHOD: GET NEXT SAMPLE
     function get_samples(this) result(sample_out)
         class(oscillator_t), intent(inout) :: this
         real(kind=dp) :: sample_out
-        
-        ! Local calculation variables
         real(kind=dp) :: step
         real(kind=dp) :: raw_sample
         real(kind=dp), parameter :: PI = 3.1415926535897932_dp
-
-        ! 1. Calculate Step Size (Delta)
-        ! gives how much of the waveform cycle have been completed in one sample
         step = this%frequency_hz / this%sample_rate
 
-        ! Generation of Raw Waveform (-1.0 to 1.0) based on Phase
         select case (this%waveform_type)
-        
-        case (0) ! Sine Wave
+        case (0) ! Sine 
             ! Map phase 0..1 to radians 0..2PI
             raw_sample = sin(2.0_dp * PI * this%phase)
             
-        case (1) ! Sawtooth Wave
-            ! Linear ramp from -1 to 1
+        case (1) !sawrooth
             ! Formula: 2 * phase - 1
             raw_sample = 2.0_dp * this%phase - 1.0_dp
             
-        case (2) ! Square Wave
+        case (2) ! Square 
             ! High if phase < 0.5, Low otherwise
             if (this%phase < 0.5_dp) then
                 raw_sample = 1.0_dp
@@ -80,8 +61,7 @@ contains
                 raw_sample = -1.0_dp
             end if
             
-        case (3) ! Triangle Wave
-            ! Starts at 1, goes to -1, back to 1.
+        case (3) ! Triangle 
             ! Formula: 4 * abs(phase - 0.5) - 1
             raw_sample = 4.0_dp * abs(this%phase - 0.5_dp) - 1.0_dp
             
@@ -91,12 +71,8 @@ contains
 
         !   Amplitude
         sample_out = raw_sample * this%amplitude
-
-        !  Update Phase for NEXT time (The Accumulator)
         this%phase = this%phase + step
 
-      
-        ! If wnt past 1.0, wrap back to the start
         if (this%phase >= 1.0_dp) then
             this%phase = this%phase - 1.0_dp
         end if

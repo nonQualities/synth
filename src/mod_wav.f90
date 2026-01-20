@@ -8,6 +8,7 @@
 !> 3. allocatable: Arrays whose size is determined at runtime, not compile time.
 !> 4. newunit=x: Let the compiler pick a free file ID for 'x'.
 !> 5. access='stream': Treat file as a raw sequence of bytes (no line breaks).
+!> coded this module with help of Gemini.
 !> -----------------------------------------------------------------------------
 module mod_wav
     use mod_types
