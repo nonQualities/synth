@@ -7,7 +7,7 @@ program fsynth_main
 
     
     integer,       parameter :: SAMPLE_RATE = 44100
-    integer,       parameter :: DURATION_S  = 5
+    integer,       parameter :: DURATION_S  = 2
     real(kind=dp), parameter :: FREQ_HZ     = 440.0_dp
     
     integer       :: wave_choice
